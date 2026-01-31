@@ -1,0 +1,17 @@
+services:
+  _defaults:
+    public: true
+
+  PrestaShop\Module\EnhancedFields\Controller\ImageController:
+    autoconfigure: true
+    autowire: true
+
+  PrestaShop\Module\EnhancedFields\Form\Type\FileUploadType:
+    arguments:
+      - '@router'
+      - '@translator'
+    tags: [ form.type ]
+
+  PrestaShop\Module\EnhancedFields\Form\ImageTempType:
+    tags: [ form.type ]
+

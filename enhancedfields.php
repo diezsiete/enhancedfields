@@ -24,9 +24,4 @@ class EnhancedFields extends Module
         $this->displayName = $this->trans('Enhanced Fields', [], 'Modules.EnhancedFields.EnhancedFields');
         $this->description = $this->trans('New fields for adminisration forms.', [], 'Modules.EnhancedFields.EnhancedFields');
     }
-
-    public function install()
-    {
-        return parent::install();
-    }
 }

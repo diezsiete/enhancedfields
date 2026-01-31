@@ -1,0 +1,10 @@
+{%- block enhanced_file_upload_row -%}
+  <div class="enhanced-file-upload"
+       data-fetch-url="{{ extra.fetch_url }}"
+       data-upload-url="{{ extra.upload_url }}"
+       data-filename="{{ extra.filename }}"
+       data-filename-original="{{ extra.filename_original }}"
+  >
+    {{- block('form_row') -}}
+  </div>
+{%- endblock -%}
