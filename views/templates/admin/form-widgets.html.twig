@@ -8,3 +8,21 @@
     {{- block('form_row') -}}
   </div>
 {%- endblock -%}
+
+{%- block enhanced_file_upload_widget -%}
+  <div class="custom-file">
+    {% if attr.disabled is defined and attr.disabled %}
+      {% set attr = attr|merge({
+        class: attr.class ~ ' disabled'
+      }) %}
+    {% endif %}
+
+    {{- block('form_widget_simple') -}}
+    {#<input type="file" class="dropzoned custom-file-input d-none" data-locale="es">#}
+
+    <label class="custom-file-label" for="{{ form.vars.id }}" data-after-content="{{ "Browse"|trans({}, 'Admin.Actions')  }}">
+      {% set attributes = form.vars.attr %}
+      {{ attributes.placeholder is defined ?  attributes.placeholder : 'Choose file(s)'|trans({}, 'Admin.Actions') }}
+    </label>
+  </div>
+{%- endblock -%}

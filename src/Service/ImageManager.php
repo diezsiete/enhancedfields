@@ -39,6 +39,47 @@ class ImageManager
         return $tempImageName;
     }
 
+    public function moveTempImage(?string $tempPath, string $definitiveDir, ?string $ext = null): ?string
+    {
+        $uniqName = null;
+        if ($tempImageName = $this->getTempImageName($tempPath)) {
+            // replace spaces to avoid warnings in browser: Failed parsing 'srcset' attribute value since it has an unknown descriptor
+            $pathinfo = pathinfo($tempImageName);
+            $uniqName = preg_replace('/\s+/', '-', trim($pathinfo['filename'])) . '-' . uniqid() . '.' . ($ext ?? $pathinfo['extension']);
+            if (!file_exists($definitiveDir)) {
+                mkdir($definitiveDir, recursive: true);
+            }
+
+            ImageManagerCore::resize(
+                _PS_TMP_IMG_DIR_ . $tempImageName, $this->getDifinitivePath($definitiveDir, $uniqName), forceType: true
+            );
+        }
+        return $uniqName;
+    }
+
+    public function getTempImageName(?string $tempPath): ?string
+    {
+        if ($tempPath) {
+            $tempPathExplode = explode('/', $tempPath);
+            if ($tempPathExplode[0] === 'temp') {
+                return $tempPathExplode[1];
+            }
+        }
+        return null;
+    }
+
+    public function removeDefinitiveImage(string $definitiveDir, string $imageName): void
+    {
+        $imagePath = $this->getDifinitivePath($definitiveDir, $imageName);
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+            // TODO validate webp and avi cases if enabled in admin
+            if (($webpPath = $this->changeNameExtension($imagePath, 'webp')) && file_exists($webpPath)) {
+                unlink($webpPath);
+            }
+        }
+    }
+
     /**
      * basedon \PrestaShop\PrestaShop\Adapter\Image\Uploader\AbstractImageUploader::checkImageIsAllowedForUpload
      * Check if image is allowed to be uploaded.
@@ -61,5 +102,15 @@ class ImageManager
         ) {
             throw new UploadedImageConstraintException(sprintf('Image format "%s", not recognized, allowed formats are: .gif, .jpg, .png', $image->getClientOriginalExtension()), UploadedImageConstraintException::UNRECOGNIZED_FORMAT);
         }
+    }
+
+    private function getDifinitivePath(string $definitiveDir, string $definitiveName): string
+    {
+        return $definitiveDir . '/' . ltrim($definitiveName, '/');
+    }
+
+    private function changeNameExtension(string $name, string $extension): ?string
+    {
+        return ($dotpos = strrpos($name, '.')) !== false ? substr($name, 0, $dotpos) . ".$extension" : null;
     }
 }

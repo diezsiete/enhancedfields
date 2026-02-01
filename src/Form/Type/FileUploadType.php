@@ -27,7 +27,7 @@ class FileUploadType extends AbstractType
     {
         $resolver->setDefaults([
             'attr' => [
-                'class' => 'dropzoned dummy-input',
+                'class' => 'dropzoned custom-file-input dummy-input',
                 'placeholder' => $this->translator->trans('Select File', domain: 'Modules.EnhancedFields.EnhancedFields'),
                 'autocomplete' => 'off',
             ],
@@ -46,40 +46,28 @@ class FileUploadType extends AbstractType
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $fileName = $view->vars['data'] ?? null;
-        $nameOriginal = $fileName;
+        $filename = $view->vars['data'] ?? null;
+        $nameOriginal = $filename;
 
-        if ($fileName) {
-            if (!str_contains($fileName, 'temp/')) {
-                $nameOriginal = ($options['dir_final'] ? $options['dir_final'] . '/' : '') . $fileName;
+        if ($filename) {
+            if (!str_contains($filename, 'temp/')) {
+                $nameOriginal = ($options['dir_final'] ? $options['dir_final'] . '/' : '') . $filename;
                 $placeholder = preg_replace(
-                    '/(.+)(-\w+)(\.\w+$)/', '$1$3', $fileName
+                    '/(.+)(-\w+)(\.\w+$)/', '$1$3', $filename
                 );
             } else {
-                $placeholder = str_replace('temp/', '', $fileName);
+                $placeholder = str_replace('temp/', '', $filename);
             }
             $view->vars['attr']['placeholder'] = $placeholder;
         }
         $view->vars['extra'] = [
             'fetch_url' => $this->router->generate('enhancedfields_image_fetch', [
                 'location' => 'location',
-                'fileName' => 'fileName'
+                'filename' => 'filename'
             ]),
             'upload_url' => $this->router->generate($options['upload_route']),
-            'filename' => $fileName,
+            'filename' => $filename,
             'filename_original' => $nameOriginal,
         ];
-
-        // $view->vars['extra'] = [
-        //     'datas' => [
-        //         'data-file-fetch-url' => $this->router->generate('enhancedfields_image_fetch', [
-        //             'location' => 'location',
-        //             'fileName' => 'fileName'
-        //         ]),
-        //         'data-file-upload-url' => $this->router->generate($options['upload_route']),
-        //         'data-file-name' => $fileName,
-        //         'data-file-name-original' => $nameOriginal,
-        //     ],
-        // ];
     }
 }

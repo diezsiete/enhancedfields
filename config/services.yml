@@ -15,3 +15,5 @@ services:
   PrestaShop\Module\EnhancedFields\Form\ImageTempType:
     tags: [ form.type ]
 
+
+  PrestaShop\Module\EnhancedFields\Service\ImageManager: ~

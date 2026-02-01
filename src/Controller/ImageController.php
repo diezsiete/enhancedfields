@@ -52,17 +52,17 @@ class ImageController extends PrestaShopAdminController
         return $this->json($response, $status);
     }
 
-    public function fetchAction(string $location, string $fileName): StreamedResponse
+    public function fetchAction(string $location, string $filename): StreamedResponse
     {
         $file = null;
         $dirs = $location === 'temp' ? _PS_TMP_IMG_DIR_ : _PS_ROOT_DIR_ . '/' . ltrim($location, '/');
 
         // if fileName comes with subdir extract it and append to dirs
-        if (preg_match('~^(.+?)/[^/]+$~', $fileName, $matches)) {
+        if (preg_match('~^(.+?)/[^/]+$~', $filename, $matches)) {
             $dirs .= '/' . $matches[1];
-            $fileName = str_replace($matches[1] . '/', '', $fileName);
+            $filename = str_replace($matches[1] . '/', '', $filename);
         }
-        foreach ((new Finder())->files()->name($fileName)->in($dirs) as $finderFile) {
+        foreach ((new Finder())->files()->name($filename)->in($dirs) as $finderFile) {
             $file = $finderFile;
         }
         if ($file) {

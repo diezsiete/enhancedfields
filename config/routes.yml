@@ -5,9 +5,9 @@ enhancedfields_image_upload_temp:
     _controller: PrestaShop\Module\EnhancedFields\Controller\ImageController::uploadTempAction
 
 enhancedfields_image_fetch:
-  path: /enhancedfields/image/fetch/{location}/{fileName}
+  path: /enhancedfields/image/fetch/{location}/{filename}
   methods: [ GET ]
   defaults:
     _controller: PrestaShop\Module\EnhancedFields\Controller\ImageController::fetchAction
   requirements:
-    fileName: .+
+    filename: .+

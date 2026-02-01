@@ -1,0 +1,26 @@
+{
+  "name": "enhancedfields",
+  "version": "1.0.0",
+  "description": "PrestaShop Module Enhanced Fields",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --progress --color --mode=production",
+    "dev": "webpack --progress --mode=development",
+    "watch": "npm run dev -- --watch"
+  },
+  "author": "diezsiete",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/dropzone": "^5.7.9",
+    "css-loader": "^7.1.2",
+    "dropzone": "^5.9.3",
+    "esbuild-loader": "^4.4.1",
+    "mini-css-extract-plugin": "^2.9.4",
+    "postcss-loader": "^8.2.0",
+    "sass": "^1.97.2",
+    "sass-loader": "^16.0.6",
+    "typescript": "^5.9.3",
+    "webpack": "^5.104.1",
+    "webpack-cli": "^6.0.1"
+  }
+}

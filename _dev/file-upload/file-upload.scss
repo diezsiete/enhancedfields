@@ -1,0 +1,8 @@
+.enhanced-file-upload {
+  .dummy-input {
+    cursor: default;
+  }
+  .custom-file-label:after {
+    content: attr(data-after-content) !important;
+  }
+}

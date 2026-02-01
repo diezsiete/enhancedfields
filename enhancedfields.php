@@ -24,4 +24,16 @@ class EnhancedFields extends Module
         $this->displayName = $this->trans('Enhanced Fields', [], 'Modules.EnhancedFields.EnhancedFields');
         $this->description = $this->trans('New fields for adminisration forms.', [], 'Modules.EnhancedFields.EnhancedFields');
     }
+
+    public function install(): bool
+    {
+        return parent::install() &&
+            $this->registerHook('actionAdminControllerSetMedia');
+    }
+
+    public function hookActionAdminControllerSetMedia(): void
+    {
+        $this->context->controller->addCss($this->getPathUri() . 'public/enhancedfields.css');
+        $this->context->controller->addJs($this->getPathUri() . 'public/enhancedfields.js');
+    }
 }
