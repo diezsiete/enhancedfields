@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --progress --color --mode=production",
     "dev": "webpack --progress --mode=development",
-    "watch": "npm run dev -- --watch"
+    "watch": "npm run dev -- --watch",
+    "release": "npm run build && composer install --no-dev --optimize-autoloader && cd .. && zip -r enhancedfields.zip enhancedfields -x @enhancedfields/.distignore"
   },
   "author": "diezsiete",
   "license": "ISC",

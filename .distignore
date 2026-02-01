@@ -1,0 +1,12 @@
+*/.git/*
+*/_dev/*
+*/node_modules/*
+*/.distignore
+*/.gitignore
+*/.nvmrc
+*/composer.json
+*/composer.lock
+*/package.json
+*/package-lock.json
+*/tsconfig.json
+*/webpack.config.js

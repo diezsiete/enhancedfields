@@ -19,7 +19,8 @@ class WebpackConfig {
       mode: this.mode,
       output: {
         path: this.outputPath,
-        filename: this.#getDestinationFilename('.js'),
+        filename: this.#getDestinationFilename('.js', false),
+        chunkFilename: this.#getDestinationFilename('.js', true),
         pathinfo: !this.isProduction,
         clean: true
       },
@@ -35,8 +36,8 @@ class WebpackConfig {
     }
   }
 
-  #getDestinationFilename(append = '') {
-    return (this.isProduction ? '[name].[contenthash]' : '[name]') + append
+  #getDestinationFilename(append = '', contenthash = null) {
+    return (this.isProduction && contenthash !== false || contenthash ? '[name].[contenthash]' : '[name]') + append
   }
 
   #buildRules() {
@@ -89,7 +90,7 @@ class WebpackConfig {
     const plugins = [];
 
     plugins.push(
-      new MiniCssExtractPlugin({filename: this.#getDestinationFilename('.css')}),
+      new MiniCssExtractPlugin({filename: this.#getDestinationFilename('.css', true)}),
     )
 
     return plugins;
@@ -97,10 +98,5 @@ class WebpackConfig {
 }
 
 module.exports = (env, argv) => {
-  const wpc = new WebpackConfig(argv.mode);
-
-  const config = wpc.build();
-  // console.log(config);
-  // process.exit();
-  return config;
+  return (new WebpackConfig(argv.mode)).build();
 };

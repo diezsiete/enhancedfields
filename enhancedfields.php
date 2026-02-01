@@ -33,7 +33,6 @@ class EnhancedFields extends Module
 
     public function hookActionAdminControllerSetMedia(): void
     {
-        $this->context->controller->addCss($this->getPathUri() . 'public/enhancedfields.css');
-        $this->context->controller->addJs($this->getPathUri() . 'public/enhancedfields.js');
+        $this->context->controller->addJs($this->getPathUri() . 'public/enhancedfields.js?' . $this->version);
     }
 }
