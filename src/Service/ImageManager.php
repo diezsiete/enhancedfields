@@ -50,9 +50,7 @@ class ImageManager
                 mkdir($definitiveDir, recursive: true);
             }
 
-            ImageManagerCore::resize(
-                _PS_TMP_IMG_DIR_ . $tempImageName, $this->getDifinitivePath($definitiveDir, $uniqName), forceType: true
-            );
+            copy(_PS_TMP_IMG_DIR_ . $tempImageName, $this->getDifinitivePath($definitiveDir, $uniqName));
         }
         return $uniqName;
     }
