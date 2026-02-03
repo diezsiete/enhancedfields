@@ -39,9 +39,9 @@ class ImageManager
         return $tempImageName;
     }
 
-    public function moveTempImage(?string $tempPath, string $definitiveDir, ?string $ext = null): ?string
+    public function moveTempImage(?string $tempPath, string $definitiveDir, ?string $ext = null): false|string
     {
-        $uniqName = null;
+        $uniqName = false;
         if ($tempImageName = $this->getTempImageName($tempPath)) {
             // replace spaces to avoid warnings in browser: Failed parsing 'srcset' attribute value since it has an unknown descriptor
             $pathinfo = pathinfo($tempImageName);

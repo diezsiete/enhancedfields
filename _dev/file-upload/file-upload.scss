@@ -5,4 +5,64 @@
   .custom-file-label:after {
     content: attr(data-after-content) !important;
   }
+
+  .file-viewer.fade-out {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 300ms ease, transform 300ms ease;
+  }
+  .file-viewr.slide-up {
+    overflow: hidden;
+    transition: height 5600ms ease, opacity 5600ms ease;
+  }
+
+  figure {
+    position: relative;
+    display: block;
+  }
+
+  .figure-img-container {
+    position: relative;
+  }
+  .figure-img {
+    margin-bottom: 0;
+  }
+
+  .loader-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 300ms ease, visibility 300ms ease;
+    //margin-bottom: .9375rem;
+
+    > div {
+      width: 30px;
+      height: 30px;
+      border: 2px solid #ddd;
+      border-top: 2px solid #2942cc;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      background: transparent;
+    }
+  }
+  figure.loading {
+    .figure-img-container {
+      min-height: 50px;
+    }
+    .loader-overlay {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  figcaption {
+    margin-top: .9375rem;
+  }
+
 }

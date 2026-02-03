@@ -1,14 +1,16 @@
 import './file-upload.scss'
 import Dropzone from 'dropzone';
+import FileUploadElements from "./file-upload-elements";
 
 Dropzone.autoDiscover = false;
 
 export default class FileUpload {
 
   private fetchUrl: string;
-  private uploadUrl: string;
-  private filename: string;
-  private filenameOriginal: string;
+  private readonly uploadUrl: string;
+  private readonly filenameOriginal: string;
+  private readonly fileSizeLabel: string;
+  private readonly placeholder: string;
 
   static instance(element: HTMLElement): FileUpload|null {
     const inputContainer = element.querySelector<HTMLElement>('.col-sm');
@@ -16,116 +18,78 @@ export default class FileUpload {
     const labelElement =  element.querySelector<HTMLLabelElement>('label.custom-file-label');
 
     return inputContainer && inputElement && labelElement
-      ? new FileUpload(element, inputContainer, inputElement, labelElement)
+      ? new FileUpload(new FileUploadElements(element, inputContainer, inputElement, labelElement))
       : null;
   }
 
   constructor(
-    private element: HTMLElement,
-    private inputContainer: HTMLElement,
-    private inputElement: HTMLInputElement,
-    private labelElement: HTMLLabelElement
+    private readonly elements: FileUploadElements
   ) {
-    this.fetchUrl = element.dataset.fetchUrl + '';
-    this.uploadUrl = element.dataset.uploadUrl + '';
-    this.filename = element.dataset.filename + '';
-    this.filenameOriginal = element.dataset.filenameOriginal + '';
 
-    const dropzone = new Dropzone(this.inputElement, {
+    this.fetchUrl = this.elements.dataset('fetchUrl');
+    this.uploadUrl = this.elements.dataset('uploadUrl');
+    this.filenameOriginal = this.elements.dataset('filenameOriginal');
+    this.fileSizeLabel = this.elements.dataset('fileSizeLabel','File size');
+    this.placeholder = this.elements.dataset('placeholder', 'Choose file(s)')
+
+    const dropzone = new Dropzone(this.elements.input, {
       url: this.uploadUrl,
       paramName: 'file_upload',
+      sending: () => this.elements.loading(true),
       error: (file, response) => this.onDropzoneError(response),
     });
     dropzone.on('success', (file, response) => this.onDropzoneSuccess(response))
 
-    if (this.filenameOriginal) {
-      this.showImage(this.filenameOriginal)
+    if (this.elements.deletable) {
+      this.elements.onDelete(() => this.deleteHandler())
     }
   }
 
   private onDropzoneError(response: string|any) {
+    this.elements.loading(false);
     this.addErrorMessage(
       typeof response === 'string' ? response : (response.message || response.detail || response.title || 'Unknown error')
     );
   }
 
-  private onDropzoneSuccess(response: any) {
-    this.labelElement.innerText = response.name
-    this.inputElement.value = response.path
-    this.showImage(response.path)
+  private async onDropzoneSuccess(response: any) {
+    this.elements.label.innerText = response.name
+    this.elements.input.value = response.path
+    await this.showImage(response.path);
+    this.elements.loading(false);
   }
 
   private addErrorMessage(message: string) {
-    let textDanger = this.element.querySelector<HTMLElement>('.text-danger span')
-    if (!textDanger) {
-      const textDangerContainer = this.createElement('div', ['d-inline-block', 'align-baseline', 'text-danger', 'mt-1'], {'role': 'alert'});
-      textDanger = this.createElement('span');
+    this.elements.getTextDanger().innerText = ' ' + message.trim()
+  }
 
-      textDangerContainer.appendChild(this.createElement('i', ['material-icons', 'form-error-icon'], 'error_outline'))
-      textDangerContainer.appendChild(textDanger)
-      this.inputContainer.appendChild(textDangerContainer)
+  private async showImage(filename: string) {
+    const url = this.fetchUrl.replace('location/filename', filename);
+    const response = await fetch(url);
+
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob)
+    this.elements.getImg().src = blobUrl;
+    if (this.elements.deletable) {
+      const contentLength = response.headers.get('Content-Length');
+      this.setSize(contentLength ? parseInt(contentLength) : 0);
+      this.elements.showDeleteButton();
     }
-    textDanger.innerText = ' ' + message.trim()
+
+    return blobUrl;
   }
 
-  private showImage(filename: string) {
-    const url = this.fetchUrl.replace('location/filename', filename)
-    this.fetch(url)
-      .then(response => response.blob())
-      .then(blob => {
-        const blobUrl = URL.createObjectURL(blob)
-        this.getFileViewerContainer(blobUrl)
-      });
-  }
-
-  private fetch(url: string) {
-    const headers = new Headers();
-    // options.headers.set('Accept', 'application/json, text/javascript, */*; q=0.01');
-    headers.set('X-Requested-With', 'XMLHttpRequest');
-    return fetch(url, { headers })
-  }
-
-  private getFileViewerContainer(src: string) {
-    let fileViewerContainer = this.element.querySelector<HTMLElement>('.file-viewer')
-    if (!fileViewerContainer) {
-      fileViewerContainer = this.createElement('div', ['form-group', 'row', 'file-viewer'])
-      const label = this.createElement('label', 'form-control-label')
-      const colSm = this.createElement('div', 'col-sm')
-
-      const figure = this.createElement('figure', 'figure', this.createElement(
-        'img', ['figure-img', 'img-fluid', 'img-thumbnail'], src
-      ))
-      colSm.appendChild(figure)
-      fileViewerContainer.appendChild(label)
-      fileViewerContainer.appendChild(colSm)
-      this.element.appendChild(fileViewerContainer)
+  private setSize(sizeInBytes: number) {
+    if (sizeInBytes) {
+      this.elements.getSize().innerText = `${this.fileSizeLabel} ${(sizeInBytes / 1024).toFixed(2)}kB`;
     } else {
-      fileViewerContainer.querySelector<HTMLImageElement>('figure img')?.setAttribute('src', src);
+      this.elements.removeSize();
     }
   }
 
-  private createElement(tagName: string, className?: string|string[], inner?: string|HTMLElement|Record<string, string>): HTMLElement {
-    const element = document.createElement(tagName)
-    if (Array.isArray(className)) {
-      if (className.length > 0) {
-        element.classList.add(...className);
-      }
-    } else if (className) {
-      element.classList.add(className)
-    }
-    if (inner) {
-      if (tagName === 'img') {
-        (element as HTMLImageElement).src = inner as string
-      } else if (inner instanceof HTMLElement) {
-        element.appendChild(inner)
-      } else if (typeof inner === 'object') {
-        for (const key in inner) {
-          element.setAttribute(key, inner[key])
-        }
-      } else {
-        element.innerText = inner
-      }
-    }
-    return element
+  private async deleteHandler() {
+    this.elements.label.innerText = this.placeholder
+    this.elements.input.value = ''
+    this.elements.removeFileViewer();
   }
 }

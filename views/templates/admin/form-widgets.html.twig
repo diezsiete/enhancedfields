@@ -2,10 +2,21 @@
   <div class="enhanced-file-upload"
        data-fetch-url="{{ extra.fetch_url }}"
        data-upload-url="{{ extra.upload_url }}"
-       data-filename="{{ extra.filename }}"
        data-filename-original="{{ extra.filename_original }}"
+       data-file-size-label="{{ 'File size'|trans({}, 'Admin.Advparameters.Feature') }}"
+       {% if extra.deletable %}
+         data-deletable="{{ extra.deletable }}"
+         data-deletable-label="{{ 'Delete'|trans({}, 'Admin.Actions') }}"
+         data-placeholder="{{ 'Choose file(s)'|trans({}, 'Admin.Actions') }}"
+       {% endif %}
   >
     {{- block('form_row') -}}
+    {% if extra.filename_original %}
+      {{ render(controller('PrestaShop\\Module\\EnhancedFields\\Controller\\ImageController::fileViewer', {
+        filename: extra.filename_original,
+        deletable: extra.deletable
+      })) }}
+    {% endif %}
   </div>
 {%- endblock -%}
 
@@ -18,7 +29,6 @@
     {% endif %}
 
     {{- block('form_widget_simple') -}}
-    {#<input type="file" class="dropzoned custom-file-input d-none" data-locale="es">#}
 
     <label class="custom-file-label" for="{{ form.vars.id }}" data-after-content="{{ "Browse"|trans({}, 'Admin.Actions')  }}">
       {% set attributes = form.vars.attr %}

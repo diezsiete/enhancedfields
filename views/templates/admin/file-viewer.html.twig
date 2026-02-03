@@ -1,0 +1,18 @@
+{% if src %}
+  <div class="form-group row file-viewer"><label class="form-control-label"></label>
+    <div class="col-sm">
+      <figure class="figure">
+        <div class="figure-img-container">
+          <img class="figure-img img-fluid img-thumbnail" src="{{ src }}">
+        </div>
+        {% if deletable %}
+          <figcaption class="figure-caption"><p> {{ 'File size'|trans({}, 'Admin.Advparameters.Feature') ~ ' ' ~ fileSize }}</p>
+            <button class="btn btn-outline-danger btn-sm" type="button"><i class="material-icons">delete_forever</i>
+              {{ 'Delete'|trans({}, 'Admin.Actions') }}
+            </button>
+          </figcaption>
+        {% endif %}
+      </figure>
+    </div>
+  </div>
+{% endif %}

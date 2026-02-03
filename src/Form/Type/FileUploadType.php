@@ -28,10 +28,11 @@ class FileUploadType extends AbstractType
         $resolver->setDefaults([
             'attr' => [
                 'class' => 'dropzoned custom-file-input dummy-input',
-                'placeholder' => $this->translator->trans('Select File', domain: 'Modules.EnhancedFields.EnhancedFields'),
+                'placeholder' => $this->translator->trans('Choose file(s)', domain: 'Admin.Actions'),
                 'autocomplete' => 'off',
             ],
             'data_class' => null,
+            'deletable' => false,
             'dir_final' => '',
             'upload_route' => 'enhancedfields_image_upload_temp',
         ]);
@@ -68,6 +69,7 @@ class FileUploadType extends AbstractType
             'upload_url' => $this->router->generate($options['upload_route']),
             'filename' => $filename,
             'filename_original' => $nameOriginal,
+            'deletable' => $options['deletable'],
         ];
     }
 }
