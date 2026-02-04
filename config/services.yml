@@ -16,4 +16,5 @@ services:
     tags: [ form.type ]
 
 
-  PrestaShop\Module\EnhancedFields\Service\ImageManager: ~
+  PrestaShop\Module\EnhancedFields\Service\ImageManager:
+    arguments: [ '@filesystem' ]

@@ -2,10 +2,10 @@
 
 namespace PrestaShop\Module\EnhancedFields\Controller;
 
+use ImageManager as ImageManagerCore;
 use PrestaShop\Module\EnhancedFields\Form\Type\ImageTempType;
 use PrestaShop\Module\EnhancedFields\Service\ImageManager;
 use PrestaShop\PrestaShop\Core\Image\Uploader\Exception\ImageUploadException;
-use PrestaShop\PrestaShop\Core\Image\Uploader\Exception\MemoryLimitException;
 use PrestaShop\PrestaShop\Core\Image\Uploader\Exception\UploadedImageConstraintException;
 use PrestaShopBundle\Controller\Admin\PrestaShopAdminController;
 use SplFileInfo;
@@ -17,10 +17,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Tools;
 
 class ImageController extends PrestaShopAdminController
 {
-    public function uploadTempAction(Request $request, ImageManager $imageManager): JsonResponse
+    public function uploadTempAction(Request $request, SluggerInterface $slugger): JsonResponse
     {
         $response = [];
         $status = 200;
@@ -32,14 +34,14 @@ class ImageController extends PrestaShopAdminController
                 try {
                     /** @var UploadedFile $uploadedFile */
                     $uploadedFile = $form->getData();
-                    $path = $imageManager->moveUploadedImage($uploadedFile, $uploadedFile->getClientOriginalName());
-                    $name = $uploadedFile->getClientOriginalName();
+                    $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+                    $name = $slugger->slug($originalFilename). '-' . uniqid() . '.' . $uploadedFile->guessExtension();
+                    $this->moveUploadedImage($uploadedFile, $name);
                     $response = [
-                        'name' => $name,
+                        'name' => ImageManager::filenamePlaceholder($name),
                         'path' => "temp/$name",
-                        'path_full' => $path
                     ];
-                } catch (ImageUploadException|MemoryLimitException|UploadedImageConstraintException $e) {
+                } catch (ImageUploadException|UploadedImageConstraintException $e) {
                     $error = $e->getMessage();
                 }
             } else {
@@ -130,5 +132,40 @@ class ImageController extends PrestaShopAdminController
             $response->headers->set('Content-Disposition', $disposition);
         }
         return $response;
+    }
+
+    /**
+     * basedon \PrestaShop\PrestaShop\Adapter\Image\Uploader\ManufacturerImageUploader::upload
+     * @throws UploadedImageConstraintException|ImageUploadException
+     */
+    private function moveUploadedImage(UploadedFile $image, string $name): void
+    {
+        $this->checkImageIsAllowedForUpload($image);
+        $tempImagePath = _PS_TMP_IMG_DIR_ . $name;
+        if (!move_uploaded_file($image->getPathname(), $tempImagePath)) {
+            throw new ImageUploadException(
+                'An error occurred while uploading the image. Check your directory permissions.'
+            );
+        }
+    }
+
+    /**
+     * basedon \PrestaShop\PrestaShop\Adapter\Image\Uploader\AbstractImageUploader::checkImageIsAllowedForUpload
+     * @throws UploadedImageConstraintException
+     */
+    private function checkImageIsAllowedForUpload(UploadedFile $image): void
+    {
+        $maxFileSize = Tools::getMaxUploadSize();
+
+        if ($maxFileSize > 0 && $image->getSize() > $maxFileSize) {
+            throw new UploadedImageConstraintException(sprintf('Max file size allowed is "%s" bytes. Uploaded image size is "%s".', $maxFileSize, $image->getSize()), UploadedImageConstraintException::EXCEEDED_SIZE);
+        }
+
+        if (!ImageManagerCore::isRealImage($image->getPathname(), $image->getClientMimeType())
+            || !ImageManagerCore::isCorrectImageFileExt($image->getClientOriginalName())
+            || str_contains($image->getClientOriginalName(), '%00') // prevent null byte injection
+        ) {
+            throw new UploadedImageConstraintException(sprintf('Image format "%s", not recognized, allowed formats are: .gif, .jpg, .png', $image->getClientOriginalExtension()), UploadedImageConstraintException::UNRECOGNIZED_FORMAT);
+        }
     }
 }

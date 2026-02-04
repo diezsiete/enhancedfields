@@ -1,5 +1,3 @@
-import FileUpload from "./file-upload";
-
 export default class FileUploadElements {
   private fileViewer: HTMLElement|null = null;
   private figure: HTMLElement|null = null;

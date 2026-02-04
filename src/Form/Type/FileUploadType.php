@@ -2,6 +2,7 @@
 
 namespace PrestaShop\Module\EnhancedFields\Form\Type;
 
+use PrestaShop\Module\EnhancedFields\Service\ImageManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
@@ -53,11 +54,9 @@ class FileUploadType extends AbstractType
         if ($filename) {
             if (!str_contains($filename, 'temp/')) {
                 $nameOriginal = ($options['dir_final'] ? $options['dir_final'] . '/' : '') . $filename;
-                $placeholder = preg_replace(
-                    '/(.+)(-\w+)(\.\w+$)/', '$1$3', $filename
-                );
+                $placeholder = ImageManager::filenamePlaceholder($filename);
             } else {
-                $placeholder = str_replace('temp/', '', $filename);
+                $placeholder = ImageManager::filenamePlaceholder(str_replace('temp/', '', $filename));
             }
             $view->vars['attr']['placeholder'] = $placeholder;
         }

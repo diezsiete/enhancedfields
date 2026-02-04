@@ -5,8 +5,7 @@ import FileUploadElements from "./file-upload-elements";
 Dropzone.autoDiscover = false;
 
 export default class FileUpload {
-
-  private fetchUrl: string;
+  private readonly fetchUrl: string;
   private readonly uploadUrl: string;
   private readonly filenameOriginal: string;
   private readonly fileSizeLabel: string;
@@ -25,12 +24,11 @@ export default class FileUpload {
   constructor(
     private readonly elements: FileUploadElements
   ) {
-
     this.fetchUrl = this.elements.dataset('fetchUrl');
     this.uploadUrl = this.elements.dataset('uploadUrl');
     this.filenameOriginal = this.elements.dataset('filenameOriginal');
     this.fileSizeLabel = this.elements.dataset('fileSizeLabel','File size');
-    this.placeholder = this.elements.dataset('placeholder', 'Choose file(s)')
+    this.placeholder = this.elements.dataset('placeholder', 'Choose file(s)');
 
     const dropzone = new Dropzone(this.elements.input, {
       url: this.uploadUrl,
@@ -48,8 +46,11 @@ export default class FileUpload {
   private onDropzoneError(response: string|any) {
     this.elements.loading(false);
     this.addErrorMessage(
-      typeof response === 'string' ? response : (response.message || response.detail || response.title || 'Unknown error')
+      typeof response === 'string' ? response : (response.error || response.message || response.detail || response.title || 'Unknown error')
     );
+    if (!this.elements.input.value) {
+      this.elements.removeFileViewer();
+    }
   }
 
   private async onDropzoneSuccess(response: any) {

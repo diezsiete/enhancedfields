@@ -2,7 +2,7 @@
 <module>
     <name>enhancedfields</name>
     <displayName><![CDATA[Enhanced Fields]]></displayName>
-    <version><![CDATA[1.0.1]]></version>
+    <version><![CDATA[1.1.0]]></version>
     <description><![CDATA[New fields for adminisration forms.]]></description>
     <author><![CDATA[diezsiete]]></author>
     <tab><![CDATA[administration]]></tab>
