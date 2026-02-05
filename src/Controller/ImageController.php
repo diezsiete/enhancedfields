@@ -72,8 +72,7 @@ class ImageController extends PrestaShopAdminController
         $filename = substr($filename, strlen($location) + 1);
         $src = ($location === 'temp' ? _PS_TMP_IMG_ : "/$location") . "/$filename";
         $fileSize = 0;
-        if ($deletable) {
-            $file = $this->findFile($location, $filename);
+        if ($deletable && $file = $this->findFile($location, $filename)) {
             $fileSize = sprintf('%skB', $file->getSize() / 1000);
         }
 
