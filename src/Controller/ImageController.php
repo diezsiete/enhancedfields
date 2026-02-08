@@ -7,8 +7,8 @@ use PrestaShop\Module\EnhancedFields\Form\Type\ImageTempType;
 use PrestaShop\Module\EnhancedFields\Service\ImageManager;
 use PrestaShop\PrestaShop\Core\Image\Uploader\Exception\ImageUploadException;
 use PrestaShop\PrestaShop\Core\Image\Uploader\Exception\UploadedImageConstraintException;
-use PrestaShopBundle\Controller\Admin\PrestaShopAdminController;
 use SplFileInfo;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -17,12 +17,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Tools;
 
-class ImageController extends PrestaShopAdminController
+class ImageController extends AbstractController
 {
-    public function uploadTempAction(Request $request, SluggerInterface $slugger): JsonResponse
+    public function uploadTempAction(Request $request): JsonResponse
     {
         $response = [];
         $status = 200;
@@ -35,7 +34,7 @@ class ImageController extends PrestaShopAdminController
                     /** @var UploadedFile $uploadedFile */
                     $uploadedFile = $form->getData();
                     $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
-                    $name = $slugger->slug($originalFilename). '-' . uniqid() . '.' . $uploadedFile->guessExtension();
+                    $name = \Tools::str2url($originalFilename). '-' . uniqid() . '.' . $uploadedFile->guessExtension();
                     $this->moveUploadedImage($uploadedFile, $name);
                     $response = [
                         'name' => ImageManager::filenamePlaceholder($name),

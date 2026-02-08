@@ -64,5 +64,10 @@
   figcaption {
     margin-top: .9375rem;
   }
+}
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
