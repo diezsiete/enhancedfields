@@ -29,7 +29,7 @@
     {% endif %}
 
     {{- block('form_widget_simple') -}}
-
+    {{- block('form_help') -}}
     <label class="custom-file-label" for="{{ form.vars.id }}" data-after-content="{{ "Browse"|trans({}, 'Admin.Actions')  }}">
       {% set attributes = form.vars.attr %}
       {{ attributes.placeholder is defined ?  attributes.placeholder : 'Choose file(s)'|trans({}, 'Admin.Actions') }}

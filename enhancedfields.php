@@ -10,7 +10,7 @@ class EnhancedFields extends Module
     {
         $this->name = 'enhancedfields';
         $this->tab = 'administration';
-        $this->version = '1.1.2';
+        $this->version = '1.1.3';
         $this->author = 'diezsiete';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = [
