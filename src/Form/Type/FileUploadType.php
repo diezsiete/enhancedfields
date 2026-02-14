@@ -28,7 +28,6 @@ class FileUploadType extends AbstractType
     {
         $resolver->setDefaults([
             'attr' => [
-                'class' => 'dropzoned custom-file-input dummy-input',
                 'placeholder' => $this->translator->trans('Choose file(s)', domain: 'Admin.Actions'),
                 'autocomplete' => 'off',
             ],

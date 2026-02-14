@@ -15,7 +15,6 @@ export default class FileUploadElements {
 
   constructor(
     public readonly element: HTMLElement,
-    public readonly inputContainer: HTMLElement,
     public readonly input: HTMLInputElement,
     public readonly label: HTMLLabelElement
   ) {
@@ -76,7 +75,11 @@ export default class FileUploadElements {
 
         textDangerContainer.appendChild(icon)
         textDangerContainer.appendChild(this.textDanger)
-        this.inputContainer.appendChild(textDangerContainer)
+        if (this.fileViewer) {
+          this.fileViewer.insertAdjacentElement('beforebegin', textDangerContainer)
+        } else {
+          this.element.appendChild(textDangerContainer);
+        }
       }
     }
 
@@ -135,13 +138,7 @@ export default class FileUploadElements {
 
   private createFileViewer(): HTMLElement {
     this.fileViewer = document.createElement('div');
-    this.fileViewer.classList.add('form-group', 'row', 'file-viewer');
-
-    const label = document.createElement('label');
-    label.classList.add('form-control-label');
-
-    const colSm = document.createElement('div')
-    colSm.classList.add('col-sm');
+    this.fileViewer.classList.add('file-viewer');
 
     this.figure = document.createElement('figure');
     this.figure.classList.add('figure');
@@ -154,9 +151,7 @@ export default class FileUploadElements {
 
     this.imgContainer.appendChild(this.img);
     this.figure.appendChild(this.imgContainer);
-    colSm.appendChild(this.figure)
-    this.fileViewer.appendChild(label)
-    this.fileViewer.appendChild(colSm)
+    this.fileViewer.appendChild(this.figure);
     this.element.appendChild(this.fileViewer);
 
     return this.fileViewer;

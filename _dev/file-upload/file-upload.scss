@@ -6,14 +6,8 @@
     content: attr(data-after-content) !important;
   }
 
-  .file-viewer.fade-out {
-    opacity: 0;
-    transform: scale(0.95);
-    transition: opacity 300ms ease, transform 300ms ease;
-  }
-  .file-viewr.slide-up {
-    overflow: hidden;
-    transition: height 5600ms ease, opacity 5600ms ease;
+  .file-viewer {
+    margin-top: 1.2rem;
   }
 
   figure {
@@ -26,6 +20,10 @@
   }
   .figure-img {
     margin-bottom: 0;
+    width: 100%;
+    &:not([src]) {
+      border: none;
+    }
   }
 
   .loader-overlay {

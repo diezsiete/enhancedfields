@@ -12,12 +12,11 @@ export default class FileUpload {
   private readonly placeholder: string;
 
   static instance(element: HTMLElement): FileUpload|null {
-    const inputContainer = element.querySelector<HTMLElement>('.col-sm');
     const inputElement = element.querySelector<HTMLInputElement>('input.custom-file-input');
     const labelElement =  element.querySelector<HTMLLabelElement>('label.custom-file-label');
 
-    return inputContainer && inputElement && labelElement
-      ? new FileUpload(new FileUploadElements(element, inputContainer, inputElement, labelElement))
+    return inputElement && labelElement
+      ? new FileUpload(new FileUploadElements(element, inputElement, labelElement))
       : null;
   }
 

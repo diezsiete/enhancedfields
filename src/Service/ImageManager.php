@@ -47,6 +47,14 @@ class ImageManager
         }
     }
 
+    public function handleImageSubmision(string $definitiveDir, ?string $newImage, ?string $currentImage = null): false|null|string
+    {
+        if ($currentImage && ($this->getTempImageName($newImage) || !$newImage)) {
+            $this->removeDefinitiveImage($definitiveDir, $currentImage);
+        }
+        return !$newImage && $currentImage ? null : $this->moveTempImage($newImage, $definitiveDir);
+    }
+
     private function getDifinitivePath(string $definitiveDir, string $definitiveName): string
     {
         return $definitiveDir . '/' . ltrim($definitiveName, '/');

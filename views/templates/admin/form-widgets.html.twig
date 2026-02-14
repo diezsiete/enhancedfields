@@ -1,32 +1,25 @@
-{%- block enhanced_file_upload_row -%}
-  <div class="enhanced-file-upload"
-       data-fetch-url="{{ extra.fetch_url }}"
-       data-upload-url="{{ extra.upload_url }}"
-       data-filename-original="{{ extra.filename_original }}"
-       data-file-size-label="{{ 'File size'|trans({}, 'Admin.Advparameters.Feature') }}"
-       {% if extra.deletable %}
-         data-deletable="{{ extra.deletable }}"
-         data-deletable-label="{{ 'Delete'|trans({}, 'Admin.Actions') }}"
-         data-placeholder="{{ 'Choose file(s)'|trans({}, 'Admin.Actions') }}"
-       {% endif %}
-  >
-    {{- block('form_row') -}}
-    {% if extra.filename_original %}
-      {{ render(controller('PrestaShop\\Module\\EnhancedFields\\Controller\\ImageController::fileViewer', {
-        filename: extra.filename_original,
-        deletable: extra.deletable
-      })) }}
-    {% endif %}
-  </div>
-{%- endblock -%}
-
 {%- block enhanced_file_upload_widget -%}
+<div class="enhanced-file-upload"
+     data-fetch-url="{{ extra.fetch_url }}"
+     data-upload-url="{{ extra.upload_url }}"
+     data-filename-original="{{ extra.filename_original }}"
+     data-file-size-label="{{ 'File size'|trans({}, 'Admin.Advparameters.Feature') }}"
+  {% if extra.deletable %}
+    data-deletable="{{ extra.deletable }}"
+    data-deletable-label="{{ 'Delete'|trans({}, 'Admin.Actions') }}"
+    data-placeholder="{{ 'Choose file(s)'|trans({}, 'Admin.Actions') }}"
+  {% endif %}
+>
   <div class="custom-file">
     {% if attr.disabled is defined and attr.disabled %}
       {% set attr = attr|merge({
         class: attr.class ~ ' disabled'
       }) %}
     {% endif %}
+
+    {% set attr = attr|merge({
+      class: (attr.class|default('') ~ ' dropzoned custom-file-input dummy-input' ~ (attr.disabled is defined and attr.disabled ? ' disabled' : ''))|trim
+    }) %}
 
     {{- block('form_widget_simple') -}}
     {{- block('form_help') -}}
@@ -35,4 +28,11 @@
       {{ attributes.placeholder is defined ?  attributes.placeholder : 'Choose file(s)'|trans({}, 'Admin.Actions') }}
     </label>
   </div>
+  {% if extra.filename_original %}
+    {{ render(controller('PrestaShop\\Module\\EnhancedFields\\Controller\\ImageController::fileViewer', {
+      filename: extra.filename_original,
+      deletable: extra.deletable
+    })) }}
+  {% endif %}
+</div>
 {%- endblock -%}
