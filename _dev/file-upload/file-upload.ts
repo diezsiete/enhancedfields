@@ -69,7 +69,7 @@ export default class FileUpload {
 
     const blob = await response.blob();
     const blobUrl = URL.createObjectURL(blob)
-    this.elements.getImg().src = blobUrl;
+    this.elements.setImgSrc(blobUrl);
     if (this.elements.deletable) {
       const contentLength = response.headers.get('Content-Length');
       this.setSize(contentLength ? parseInt(contentLength) : 0);

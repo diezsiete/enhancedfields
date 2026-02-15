@@ -44,11 +44,12 @@ export default class FileUploadElements {
     return this.figure as HTMLElement;
   }
 
-  getImg(): HTMLImageElement {
+  setImgSrc(src: string): void {
     if (!this.img) {
       this.createFileViewer();
     }
-    return this.img as HTMLImageElement;
+    this.img!.src = src;
+    this.imgContainer!.classList.remove('empty')
   }
 
   loading(show: boolean) {
@@ -138,13 +139,13 @@ export default class FileUploadElements {
 
   private createFileViewer(): HTMLElement {
     this.fileViewer = document.createElement('div');
-    this.fileViewer.classList.add('file-viewer');
+    this.fileViewer.classList.add('file-viewer', 'mt-3');
 
     this.figure = document.createElement('figure');
     this.figure.classList.add('figure');
 
     this.imgContainer = document.createElement('div');
-    this.imgContainer.classList.add('figure-img-container')
+    this.imgContainer.classList.add('figure-img-container', 'empty')
 
     this.img = document.createElement('img');
     this.img.classList.add('figure-img', 'img-fluid', 'img-thumbnail');

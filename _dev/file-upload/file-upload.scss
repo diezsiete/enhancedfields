@@ -6,10 +6,6 @@
     content: attr(data-after-content) !important;
   }
 
-  .file-viewer {
-    margin-top: 1.2rem;
-  }
-
   figure {
     position: relative;
     display: block;
@@ -17,13 +13,12 @@
 
   .figure-img-container {
     position: relative;
+    &:not(.empty) {
+      display: inline-block;
+    }
   }
   .figure-img {
     margin-bottom: 0;
-    width: 100%;
-    &:not([src]) {
-      border: none;
-    }
   }
 
   .loader-overlay {
@@ -37,7 +32,6 @@
     opacity: 0;
     visibility: hidden;
     transition: opacity 300ms ease, visibility 300ms ease;
-    //margin-bottom: .9375rem;
 
     > div {
       width: 30px;
