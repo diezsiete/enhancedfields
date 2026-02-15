@@ -1,0 +1,13 @@
+{
+  "name": "@diezsiete/enhancedfields-types",
+  "version": "1.0.0",
+  "description": "Types exposed for development",
+  "types": "index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "index.d.ts"
+  ],
+  "keywords": ["prestashop", "typescript", "types"],
+  "author": "Diezsiete",
+  "license": "ISC"
+}
