@@ -2,6 +2,7 @@
 
 namespace PrestaShop\Module\EnhancedFields\Service;
 
+use Hook;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ImageManager
@@ -18,7 +19,9 @@ class ImageManager
     public function moveTempImage(?string $tempPath, string $definitiveDir): false|string
     {
         if ($tempImageName = $this->getTempImageName($tempPath)) {
-            $this->filesystem->copy(_PS_TMP_IMG_DIR_ . $tempImageName, $this->getDifinitivePath($definitiveDir, $tempImageName));
+            $image = $this->getDifinitivePath($definitiveDir, $tempImageName);
+            $this->filesystem->copy(_PS_TMP_IMG_DIR_ . $tempImageName, $image);
+            Hook::exec('actionOnEnhancedImageMoved', ['image' => $image]);
         }
 
         return $tempImageName;
@@ -37,13 +40,14 @@ class ImageManager
 
     public function removeDefinitiveImage(string $definitiveDir, string $imageName): void
     {
-        $imagePath = $this->getDifinitivePath($definitiveDir, $imageName);
-        if (file_exists($imagePath)) {
-            unlink($imagePath);
+        $image = $this->getDifinitivePath($definitiveDir, $imageName);
+        if (file_exists($image)) {
+            unlink($image);
             // TODO validate webp and avi cases if enabled in admin
-            if (($webpPath = $this->changeNameExtension($imagePath, 'webp')) && file_exists($webpPath)) {
+            if (($webpPath = $this->changeNameExtension($image, 'webp')) && file_exists($webpPath)) {
                 unlink($webpPath);
             }
+            Hook::exec('actionOnEnhancedImageRemoved', ['image' => $image]);
         }
     }
 
