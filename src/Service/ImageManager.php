@@ -16,12 +16,17 @@ class ImageManager
         return preg_replace('/(.+)(-\w+)(\.\w+$)/', '$1$3', $filename);
     }
 
-    public function moveTempImage(?string $tempPath, string $definitiveDir): false|string
+    public function moveTempImage(?string $tempPath, string $definitiveDir, ?string $definitiveName = null): false|string
     {
         if ($tempImageName = $this->getTempImageName($tempPath)) {
-            $image = $this->getDifinitivePath($definitiveDir, $tempImageName);
+            if ($definitiveName && !pathinfo($definitiveName, PATHINFO_EXTENSION)) {
+                $definitiveName .= '.' . pathinfo($tempImageName, PATHINFO_EXTENSION);
+            }
+            $definitiveName = $definitiveName ?? $tempImageName;
+            $image = $this->getDifinitivePath($definitiveDir, $definitiveName);
             $this->filesystem->copy(_PS_TMP_IMG_DIR_ . $tempImageName, $image);
             Hook::exec('actionOnEnhancedImageMoved', ['image' => $image]);
+            return $definitiveName;
         }
 
         return $tempImageName;
